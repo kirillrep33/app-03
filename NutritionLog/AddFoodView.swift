@@ -136,8 +136,11 @@ struct AddFoodView: View {
                             .foregroundColor(profileManager.borderColor)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     )
-                    .padding(.bottom, geometry.safeAreaInsets.bottom)
+
+                    .padding(.bottom, 0)
                 }
+
+                .ignoresSafeArea(edges: .bottom)
                 
                 if let food = selectedFood {
                     profileManager.backgroundColor.opacity(0.8)

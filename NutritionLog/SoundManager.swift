@@ -10,7 +10,7 @@ final class SoundManager {
     private init() {}
     
     func playButtonSound() {
-        // Загружаем и воспроизводим звук "button" из основного бандла
+  
         guard let url = Bundle.main.url(forResource: "button", withExtension: "mp3") ??
                         Bundle.main.url(forResource: "button", withExtension: "wav") else {
             return
@@ -21,7 +21,7 @@ final class SoundManager {
             buttonPlayer?.prepareToPlay()
             buttonPlayer?.play()
         } catch {
-            // В проде можно повесить лог, но тут просто молча игнорируем
+     
         }
     }
 }

@@ -97,8 +97,7 @@ struct ContentView: View {
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     )
-                    // Навигационная панель должна быть в самом низу экрана,
-                    // поэтому игнорируем нижнюю safe-area.
+
                     .padding(.bottom, 0)
                 }
                 .ignoresSafeArea(edges: .bottom)
@@ -1566,9 +1565,13 @@ struct DatabaseView: View {
 }
 
 class ProfileManager: ObservableObject {
-    @Published var profileImage: UIImage? = nil
-    
 
+    @Published var profileImage: UIImage? = nil {
+        didSet {
+            saveProfileImageToDefaults(profileImage)
+        }
+    }
+    
     @AppStorage("profile_has_been_edited") var hasProfileBeenEdited: Bool = false
     
 
@@ -1589,6 +1592,68 @@ class ProfileManager: ObservableObject {
     @AppStorage("settings_notifications_enabled") var notificationsEnabled: Bool = false
     @AppStorage("settings_data_sync_automatic") var isDataSyncAutomatic: Bool = true
     
+ 
+    
+    init() {
+
+        self.profileImage = Self.loadProfileImageFromDefaults()
+        
+     
+        checkNotificationStatus()
+    }
+    
+
+    
+    private static let profileImageDefaultsKey = "profile_image_data"
+    
+
+    private func saveProfileImageToDefaults(_ image: UIImage?) {
+        let defaults = UserDefaults.standard
+        
+        guard let image = image else {
+
+            defaults.removeObject(forKey: Self.profileImageDefaultsKey)
+            return
+        }
+
+
+        let targetMaxSide: CGFloat = 256
+        let resizedImage = resizeImage(image, maxSide: targetMaxSide)
+
+  
+        guard let data = resizedImage.jpegData(compressionQuality: 0.5) else {
+            defaults.removeObject(forKey: Self.profileImageDefaultsKey)
+            return
+        }
+
+        defaults.set(data, forKey: Self.profileImageDefaultsKey)
+    }
+    
+
+    private static func loadProfileImageFromDefaults() -> UIImage? {
+        let defaults = UserDefaults.standard
+        guard let data = defaults.data(forKey: profileImageDefaultsKey),
+              let image = UIImage(data: data) else {
+            return nil
+        }
+        return image
+    }
+
+    private func resizeImage(_ image: UIImage, maxSide: CGFloat) -> UIImage {
+        let size = image.size
+        let maxCurrentSide = max(size.width, size.height)
+
+        guard maxCurrentSide > maxSide else { return image }
+        
+        let scale = maxSide / maxCurrentSide
+        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let result = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+        return result
+    }
   
     func formatWeight(_ kg: Double) -> (value: String, unit: String) {
         if isMetric {
@@ -1736,11 +1801,6 @@ class ProfileManager: ObservableObject {
                 }
             }
         }
-    }
-    
-    init() {
- 
-        checkNotificationStatus()
     }
 }
 

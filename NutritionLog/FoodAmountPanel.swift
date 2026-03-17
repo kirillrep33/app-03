@@ -32,23 +32,22 @@ struct FoodAmountPanel: View {
         Int(round(food.carbs * factor))
     }
     
-    // Dark-theme specific colors from design for this panel
+   
     private var panelBackgroundColor: Color {
         profileManager.isDarkMode
-        ? Color(red: 0.11, green: 0.11, blue: 0.11)   // #1C1C1C
+        ? Color(red: 0.11, green: 0.11, blue: 0.11)
         : profileManager.cardBackgroundColor
     }
     
     private var innerBlockBackgroundColor: Color {
         profileManager.isDarkMode
-        ? Color(red: 0.082, green: 0.082, blue: 0.082) // #151515
-        // Для светлой темы делаем эти панели чуть темнее основного cardBackground
+        ? Color(red: 0.082, green: 0.082, blue: 0.082)
         : Color(red: 0.75, green: 0.75, blue: 0.75)
     }
     
     private var innerBorderColor: Color {
         profileManager.isDarkMode
-        ? Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
+        ? Color(red: 0.165, green: 0.165, blue: 0.165)
         : profileManager.borderColor
     }
     
